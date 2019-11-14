@@ -13,6 +13,11 @@
     </properties>
 
     <name>GraphicalAVLTree</name>
+    <url>https://github.com/PatasTeam/GraphicAVLTree</url>
+    <organization>
+        <name>Patas Team</name>
+        <url>https://github.com/PatasTeam</url>
+    </organization>
   
     <dependencies>
     <dependency>
