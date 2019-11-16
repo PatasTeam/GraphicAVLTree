@@ -1,21 +1,26 @@
 package org.patas.tree;
 
 public class Node<E extends Comparable<E>> {
-    private E element;
+    private final E element;
     private int height;
     private Node<E> left, right;
 
     Node(E element) {
         this.element = element;
         height = 1;
-        left = null;
-        right = null;
+    }
+
+    E getElement() {
+        return element;
     }
 
     int getHeight() {
         return height;
     }
 
+    /**
+     * Recalculates max height from the height of its left and right nodes
+     */
     void updateHeight() {
         int heightLeft = left != null ? left.getHeight() : 0;
         int heightRight = right != null ? right.getHeight() : 0;

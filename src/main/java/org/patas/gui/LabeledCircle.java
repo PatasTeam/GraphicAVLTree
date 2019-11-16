@@ -7,6 +7,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
+import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
 public class LabeledCircle extends Pane {
@@ -53,6 +54,10 @@ public class LabeledCircle extends Pane {
      */
     private void configureLabel(String text) {
         label = new Label(text);
+        label.fontProperty().bind(Bindings.createObjectBinding(
+                () -> new Font(minPrefSize.divide(4.0).doubleValue()),
+                minPrefSize
+        ));
         label.setTextFill(Color.BLACK);
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
