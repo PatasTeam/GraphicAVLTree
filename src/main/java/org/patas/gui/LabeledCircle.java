@@ -10,7 +10,7 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 
-public class LabeledCircle extends Pane {
+class LabeledCircle extends Pane {
     private DoubleBinding minPrefSize;
     private Circle circle;
     private Label label;

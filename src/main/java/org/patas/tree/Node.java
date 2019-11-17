@@ -1,6 +1,8 @@
 package org.patas.tree;
 
-public class Node<E extends Comparable<E>> {
+import java.util.ArrayList;
+
+class Node<E extends Comparable<E>> {
     private final E element;
     private int height;
     private Node<E> left, right;
@@ -41,6 +43,16 @@ public class Node<E extends Comparable<E>> {
 
     void setRight(Node<E> right) {
         this.right = right;
+    }
+
+    ArrayList<String> printHelper(String trailingStr) {
+        String newTrailingStr = trailingStr + " ".repeat(toString().length() + 1);
+        ArrayList<String> result = new ArrayList<>(
+                left != null ? left.printHelper(newTrailingStr) : new ArrayList<>());
+        result.add(trailingStr + " " + toString() + (right != null || left != null ? "┤" : ""));
+        result.addAll(
+                right != null ? right.printHelper(newTrailingStr) : new ArrayList<>());
+        return result;
     }
 
     @Override
