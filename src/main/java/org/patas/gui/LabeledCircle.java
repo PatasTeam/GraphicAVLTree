@@ -1,7 +1,11 @@
 package org.patas.gui;
 
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
+import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -9,8 +13,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
+import javafx.util.Duration;
 
-class LabeledCircle extends Pane {
+public class LabeledCircle extends Pane {
     private DoubleBinding minPrefSize;
     private Circle circle;
     private Label label;
@@ -18,12 +23,8 @@ class LabeledCircle extends Pane {
     /**
      * Creates a new instance of LabeledCircle with a specified label, position and radius.
      * @param text the label assigned to this circle
-     * @param centerX the horizontal position of the center of the circle in pixels
-     * @param centerY the vertical position of the center of the circle in pixels
-     * @param radius the radius of the circle in pixels
      */
-    public LabeledCircle(String text, double centerX, double centerY, double radius) {
-        setPrefSize(2.0 * radius, 2.0 * radius);
+    public LabeledCircle(String text) {
         minPrefSize = Bindings.createDoubleBinding(
                 () -> Math.min(prefHeightProperty().doubleValue(), prefWidthProperty().doubleValue()),
                 prefHeightProperty(),
@@ -31,10 +32,11 @@ class LabeledCircle extends Pane {
         );
         configureCircle();
         configureLabel(text);
-        relocate(centerX, centerY);
-        translateXProperty().bind(widthProperty().divide(-2.0));
-        translateYProperty().bind(heightProperty().divide(-2.0));
+        translateXProperty().bind(prefWidthProperty().divide(-2.0));
+        translateYProperty().bind(prefHeightProperty().divide(-2.0));
         getChildren().addAll(circle, label);
+        // Move outside of the screen
+        relocate(getScene().getWidth() / 2, getScene().getHeight() + 100);
     }
 
     /**
@@ -63,5 +65,21 @@ class LabeledCircle extends Pane {
         label.setTextAlignment(TextAlignment.CENTER);
         label.prefWidthProperty().bind(widthProperty());
         label.prefHeightProperty().bind(heightProperty());
+    }
+
+    /**
+     * Moves the circle to the specified point
+     * @param size the new size of the circle
+     * @param position the point to move the circle to
+     */
+    public void adjustSizePosition(Point2D size, Point2D position) {
+        Timeline tl = new Timeline(new KeyFrame(
+                Duration.millis(500),
+                new KeyValue(prefWidthProperty(), size.getX()),
+                new KeyValue(prefHeightProperty(), size.getY()),
+                new KeyValue(layoutXProperty(), position.getX()),
+                new KeyValue(layoutYProperty(), position.getY())
+        ));
+        tl.play();
     }
 }

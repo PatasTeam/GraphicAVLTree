@@ -9,10 +9,7 @@ import org.patas.tree.AVLTree;
 public class TreePane extends Pane {
     private final Main main;
     private final AVLTree<Integer> tree;
-    // TODO: Find a way to store circles
-    // TODO: Find a way to show circles
     // TODO: Find a way to show the connections
-    // TODO: Design formulas to adjust the size of the tree to the screen
 
     /**
      * Constructs the Tree Pane
@@ -45,15 +42,5 @@ public class TreePane extends Pane {
             default:
                 main.relayEventFromMain(event, num);
         }
-    }
-
-    /**
-     * Updates the layout of the tree after an insertion or a deletion
-     * from the underlying AVL Tree
-     */
-    public void update() {
-        // TODO: Remove debugging tree
-        System.out.println(tree);
-        // TODO: Add animation to update the pane
     }
 }

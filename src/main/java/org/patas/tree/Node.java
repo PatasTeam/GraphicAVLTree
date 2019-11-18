@@ -1,15 +1,24 @@
 package org.patas.tree;
 
+import org.patas.gui.LabeledCircle;
+
 import java.util.ArrayList;
+import java.util.List;
 
 class Node<E extends Comparable<E>> {
     private final E element;
     private int height;
     private Node<E> left, right;
+    private List<Direction> path;
+    private LabeledCircle circle;
 
-    Node(E element) {
+    private enum Direction { LEFT, RIGHT }
+
+    Node(E element, List<Direction> path) {
         this.element = element;
+        this.path = path;
         height = 1;
+        circle = new LabeledCircle(element.toString());
     }
 
     E getElement() {
@@ -35,6 +44,10 @@ class Node<E extends Comparable<E>> {
 
     void setLeft(Node<E> left) {
         this.left = left;
+        if (left == null) return;
+        List<Direction> leftPath = new ArrayList<>(path);
+        leftPath.add(Direction.LEFT);
+        left.setPath(leftPath);
     }
 
     Node<E> getRight() {
@@ -43,6 +56,54 @@ class Node<E extends Comparable<E>> {
 
     void setRight(Node<E> right) {
         this.right = right;
+        if (right == null) return;
+        List<Direction> rightPath = new ArrayList<>(path);
+        rightPath.add(Direction.RIGHT);
+        right.setPath(rightPath);
+    }
+
+    /**
+     * Updates the path from root node to this node
+     * @param path the path to this node
+     */
+    private void setPath(List<Direction> path) {
+        this.path = path;
+        if (left != null) {
+            List<Direction> leftPath = new ArrayList<>(path);
+            leftPath.add(Direction.LEFT);
+            left.setPath(leftPath);
+        }
+        if (right != null) {
+            List<Direction> rightPath = new ArrayList<>(path);
+            rightPath.add(Direction.RIGHT);
+            right.setPath(rightPath);
+        }
+    }
+
+    /**
+     * Calculates the nodes to the root of the tree
+     * @return the number of nodes to the top
+     */
+    public int nodesToTop() {
+        return path.size();
+    }
+
+    /**
+     * Calculates the nodes to the left of this node
+     * @return the number of nodes to the left
+     */
+    public int nodesToLeft() {
+        return path.stream()
+                .mapToInt(value -> value == Direction.LEFT ? 0 : 1)
+                .reduce(0, (acc, elem) -> 2 * acc + elem);
+    }
+
+    /**
+     * Moves the attached circle to its new position
+     */
+    public void render() {
+        // TODO: Fix how to call this function
+//        circle.adjustSizePosition();
     }
 
     ArrayList<String> printHelper(String trailingStr) {

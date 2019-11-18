@@ -3,6 +3,8 @@ package org.patas.tree;
 import org.patas.Event;
 import org.patas.gui.TreePane;
 
+import java.util.ArrayList;
+
 public class AVLTree<E extends Comparable<E>> {
     private final TreePane treePane;
     private Node<E> root;
@@ -17,7 +19,7 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void insert(E element) {
         root = insert(root, element);
-        treePane.update();
+        System.out.println(this);
     }
 
     /**
@@ -28,7 +30,7 @@ public class AVLTree<E extends Comparable<E>> {
      */
     private Node<E> insert(Node<E> node, E element) {
         if (node == null)
-            return new Node<>(element);
+            return new Node<>(element, new ArrayList<>());
         int comparison = element.compareTo(node.getElement());
         if (comparison > 0)
             node.setLeft(insert(node.getLeft(), element));
@@ -57,7 +59,7 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void remove(E element) {
         root = remove(root, element);
-        treePane.update();
+        System.out.println(this);
     }
 
     /**
@@ -72,6 +74,7 @@ public class AVLTree<E extends Comparable<E>> {
             treePane.relayEventFromTreePane(Event.ELEMENT_NOT_FOUND, 0);
             return null;
         }
+        treePane.relayEventFromTreePane(Event.NO_ERROR, 0);
         int comparison = element.compareTo(node.getElement());
         if (comparison > 0)
             node.setLeft(remove(node.getLeft(), element));

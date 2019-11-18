@@ -33,6 +33,7 @@ public class Main extends Application {
             case REMOVE:
                 treePane.relayEventFromTreePane(event, num);
                 break;
+            case NO_ERROR:
             case ELEMENT_NOT_FOUND:
             case ELEMENT_ALREADY_INSERTED:
                 controlsPane.setError(event);

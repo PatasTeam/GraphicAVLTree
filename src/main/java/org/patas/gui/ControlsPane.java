@@ -13,8 +13,7 @@ import org.patas.Main;
 
 public class ControlsPane extends HBox {
     private final Main main;
-    private final Button insert;
-    private final Button remove;
+    private final Button insert, remove;
     private TextField numberField;
     private final Label errorMessage;
 
@@ -63,6 +62,9 @@ public class ControlsPane extends HBox {
      */
     public void setError(Event event) {
         switch (event) {
+            case NO_ERROR:
+                errorMessage.setText("");
+                break;
             case ELEMENT_ALREADY_INSERTED:
                 errorMessage.setText("That number is already in the tree");
                 break;
