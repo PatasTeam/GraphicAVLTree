@@ -19,7 +19,8 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void insert(E element) {
         root = insert(root, element);
-        System.out.println(this);
+        root.setPath(new ArrayList<>());
+        root.render(root.getHeight());
     }
 
     /**
@@ -30,7 +31,7 @@ public class AVLTree<E extends Comparable<E>> {
      */
     private Node<E> insert(Node<E> node, E element) {
         if (node == null)
-            return new Node<>(element, new ArrayList<>());
+            return new Node<>(element, new ArrayList<>(), treePane);
         int comparison = element.compareTo(node.getElement());
         if (comparison > 0)
             node.setLeft(insert(node.getLeft(), element));
@@ -59,7 +60,8 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void remove(E element) {
         root = remove(root, element);
-        System.out.println(this);
+        root.setPath(new ArrayList<>());
+        root.render(root.getHeight());
     }
 
     /**

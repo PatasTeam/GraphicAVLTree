@@ -7,6 +7,8 @@ import org.patas.Main;
 import org.patas.tree.AVLTree;
 
 public class TreePane extends Pane {
+    // Padding for top and bottom, and sides
+    static final double[] PADDING = new double[]{ 40, 40 };
     private final Main main;
     private final AVLTree<Integer> tree;
     // TODO: Find a way to show the connections
@@ -18,7 +20,7 @@ public class TreePane extends Pane {
     public TreePane(Main main) {
         // Set custom styles
         AnchorPane.setLeftAnchor(this, 0.0);
-        AnchorPane.setTopAnchor(this, 50.0);
+        AnchorPane.setTopAnchor(this, ControlsPane.HEIGHT);
         AnchorPane.setRightAnchor(this, 0.0);
         AnchorPane.setBottomAnchor(this, 0.0);
         // Initialize AVL Tree

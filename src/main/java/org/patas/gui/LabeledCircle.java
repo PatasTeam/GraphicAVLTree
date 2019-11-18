@@ -5,7 +5,6 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.geometry.Point2D;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
@@ -16,7 +15,6 @@ import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
 
 public class LabeledCircle extends Pane {
-    private DoubleBinding minPrefSize;
     private Circle circle;
     private Label label;
 
@@ -24,17 +22,13 @@ public class LabeledCircle extends Pane {
      * Creates a new instance of LabeledCircle with a specified label, position and radius.
      * @param text the label assigned to this circle
      */
-    public LabeledCircle(String text) {
-        minPrefSize = Bindings.createDoubleBinding(
-                () -> Math.min(prefHeightProperty().doubleValue(), prefWidthProperty().doubleValue()),
-                prefHeightProperty(),
-                prefWidthProperty()
-        );
+    public LabeledCircle(String text, TreePane treePane) {
         configureCircle();
         configureLabel(text);
         translateXProperty().bind(prefWidthProperty().divide(-2.0));
         translateYProperty().bind(prefHeightProperty().divide(-2.0));
         getChildren().addAll(circle, label);
+        treePane.getChildren().add(this);
         // Move outside of the screen
         relocate(getScene().getWidth() / 2, getScene().getHeight() + 100);
     }
@@ -45,9 +39,13 @@ public class LabeledCircle extends Pane {
     private void configureCircle() {
         Color randomColor = Color.hsb(360 * Math.random(), 1.0, 1.0, 0.7);
         circle = new Circle(0, randomColor);
-        circle.radiusProperty().bind(minPrefSize.divide(2.0));
-        circle.centerXProperty().bind(widthProperty().divide(2.0));
-        circle.centerYProperty().bind(heightProperty().divide(2.0));
+        circle.radiusProperty().bind(Bindings.createDoubleBinding(
+                () -> Math.min(prefHeightProperty().doubleValue(), prefWidthProperty().doubleValue()) / 2.0,
+                prefHeightProperty(),
+                prefWidthProperty()
+        ));
+        circle.centerXProperty().bind(prefWidthProperty().divide(2.0));
+        circle.centerYProperty().bind(prefHeightProperty().divide(2.0));
     }
 
     /**
@@ -57,29 +55,47 @@ public class LabeledCircle extends Pane {
     private void configureLabel(String text) {
         label = new Label(text);
         label.fontProperty().bind(Bindings.createObjectBinding(
-                () -> new Font(minPrefSize.divide(4.0).doubleValue()),
-                minPrefSize
+                () -> new Font(circle.radiusProperty().divide(2.0).doubleValue()),
+                circle.radiusProperty()
         ));
         label.setTextFill(Color.BLACK);
         label.setAlignment(Pos.CENTER);
         label.setTextAlignment(TextAlignment.CENTER);
-        label.prefWidthProperty().bind(widthProperty());
-        label.prefHeightProperty().bind(heightProperty());
+        label.prefWidthProperty().bind(prefWidthProperty());
+        label.prefHeightProperty().bind(prefHeightProperty());
     }
 
     /**
-     * Moves the circle to the specified point
-     * @param size the new size of the circle
-     * @param position the point to move the circle to
+     * Calculates and moves the circle to its new position
+     * @param levelWidth the total level width
+     * @param treeHeight the total tree height
+     * @param nodesToLeft the nodes to this node's left
+     * @param nodesToTop the nodes to this node's top
      */
-    public void adjustSizePosition(Point2D size, Point2D position) {
+    public void adjustSizePosition(int levelWidth, int treeHeight, int nodesToLeft, int nodesToTop) {
+        prefWidthProperty().unbind();
+        DoubleBinding newPrefWidth = getScene().widthProperty().subtract(2 * TreePane.PADDING[1]).
+                divide(levelWidth).add(TreePane.PADDING[1]);
+        prefHeightProperty().unbind();
+        DoubleBinding newPrefHeight = getScene().heightProperty().subtract(2 * TreePane.PADDING[0])
+                .subtract(ControlsPane.HEIGHT).divide(treeHeight).add(TreePane.PADDING[0]);
+        layoutXProperty().unbind();
+        DoubleBinding newLayoutX = getScene().widthProperty().multiply(nodesToLeft).divide(levelWidth);
+        layoutYProperty().unbind();
+        DoubleBinding newLayoutY = getScene().heightProperty().multiply(nodesToTop).divide(treeHeight);
         Timeline tl = new Timeline(new KeyFrame(
                 Duration.millis(500),
-                new KeyValue(prefWidthProperty(), size.getX()),
-                new KeyValue(prefHeightProperty(), size.getY()),
-                new KeyValue(layoutXProperty(), position.getX()),
-                new KeyValue(layoutYProperty(), position.getY())
+                new KeyValue(prefWidthProperty(), newPrefWidth.getValue()),
+                new KeyValue(prefHeightProperty(), newPrefHeight.getValue()),
+                new KeyValue(layoutXProperty(), newLayoutX.getValue() + newPrefWidth.getValue() / 2.0),
+                new KeyValue(layoutYProperty(), newLayoutY.getValue() + newPrefHeight.getValue() / 2.0)
         ));
+        tl.setOnFinished(event -> {
+            prefWidthProperty().bind(newPrefWidth);
+            prefHeightProperty().bind(newPrefHeight);
+            layoutXProperty().bind(newLayoutX.add(newPrefWidth.divide(2.0)));
+            layoutYProperty().bind(newLayoutY.add(newPrefHeight.divide(2.0)));
+        });
         tl.play();
     }
 }

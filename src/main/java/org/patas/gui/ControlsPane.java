@@ -12,6 +12,7 @@ import org.patas.Event;
 import org.patas.Main;
 
 public class ControlsPane extends HBox {
+    static double HEIGHT = 50;
     private final Main main;
     private final Button insert, remove;
     private TextField numberField;
@@ -26,7 +27,7 @@ public class ControlsPane extends HBox {
         // Set custom styles to the underlying HBox
         setSpacing(16);
         setAlignment(Pos.CENTER);
-        setPrefHeight(50);
+        setPrefHeight(HEIGHT);
         setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
         AnchorPane.setLeftAnchor(this, 0.0);
         AnchorPane.setTopAnchor(this, 0.0);
