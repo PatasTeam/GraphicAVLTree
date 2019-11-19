@@ -95,7 +95,7 @@ public class LabeledCircle extends Pane {
         layoutXProperty().unbind();
         DoubleBinding newLayoutX = getScene().widthProperty().multiply(nodesToLeft).divide(levelWidth);
         layoutYProperty().unbind();
-        DoubleBinding newLayoutY = getScene().heightProperty().multiply(nodesToTop).divide(treeHeight);
+        DoubleBinding newLayoutY = getScene().heightProperty().subtract(ControlsPane.HEIGHT).multiply(nodesToTop).divide(treeHeight);
         Timeline tl = new Timeline(new KeyFrame(
                 Duration.millis(500),
                 new KeyValue(prefWidthProperty(), newPrefWidth.getValue()),
