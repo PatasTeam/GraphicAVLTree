@@ -1,6 +1,7 @@
 package org.patas.tree;
 
 import org.patas.Event;
+import org.patas.gui.Connection;
 import org.patas.gui.TreePane;
 
 import java.util.ArrayList;
@@ -14,13 +15,24 @@ public class AVLTree<E extends Comparable<E>> {
     }
 
     /**
+     * Renders the the circles and connections
+     */
+    private void render() {
+        root.setPath(new ArrayList<>());
+        root.renderCircles(root.getHeight());
+        treePane.getChildren().removeAll(treePane.getChildren().filtered(
+                node -> node.getClass().equals(Connection.class)
+        ));
+        root.renderLines();
+    }
+
+    /**
      * Inserts an element into the tree by calling the private function inside
      * @param element the element to insert
      */
     public void insert(E element) {
         root = insert(root, element);
-        root.setPath(new ArrayList<>());
-        root.render(root.getHeight());
+        render();
     }
 
     /**
@@ -60,8 +72,8 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void remove(E element) {
         root = remove(root, element);
-        root.setPath(new ArrayList<>());
-        root.render(root.getHeight());
+        if (root != null)
+            render();
     }
 
     /**
@@ -170,12 +182,5 @@ public class AVLTree<E extends Comparable<E>> {
         int heightLeft = node.getLeft() != null ? node.getLeft().getHeight() : 0;
         int heightRight = node.getRight() != null ? node.getRight().getHeight() : 0;
         return heightLeft - heightRight;
-    }
-
-    @Override
-    public String toString() {
-        if (root == null)
-            return "Empty tree";
-        return String.join("\n", root.printHelper(""));
     }
 }

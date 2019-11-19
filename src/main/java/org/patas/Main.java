@@ -26,8 +26,6 @@ public class Main extends Application {
      * @param num the number to send
      */
     public void relayEventFromMain(Event event, int num) {
-        // TODO: Remove debugging events
-        System.out.println(event.name() + " " + num);
         switch (event) {
             case INSERT:
             case REMOVE:

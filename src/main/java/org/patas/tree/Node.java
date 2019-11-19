@@ -1,5 +1,6 @@
 package org.patas.tree;
 
+import org.patas.gui.Connection;
 import org.patas.gui.LabeledCircle;
 import org.patas.gui.TreePane;
 
@@ -9,6 +10,7 @@ import java.util.List;
 class Node<E extends Comparable<E>> {
     private final E element;
     private int height;
+    private TreePane treePane;
     private Node<E> left, right;
     private List<Direction> path;
     private LabeledCircle circle;
@@ -17,6 +19,7 @@ class Node<E extends Comparable<E>> {
 
     Node(E element, List<Direction> path, TreePane treePane) {
         this.element = element;
+        this.treePane = treePane;
         this.path = path;
         height = 1;
         circle = new LabeledCircle(element.toString(), treePane);
@@ -87,7 +90,7 @@ class Node<E extends Comparable<E>> {
      */
     private int nodesToLeft() {
         return path.stream()
-                .mapToInt(value -> value == Direction.LEFT ? 0 : 1)
+                .mapToInt(value -> value == Direction.RIGHT ? 0 : 1)
                 .reduce(0, (acc, elem) -> 2 * acc + elem);
     }
 
@@ -95,24 +98,28 @@ class Node<E extends Comparable<E>> {
      * Moves the attached circle to its new position
      * @param totalHeight the total height of the tree
      */
-    void render(int totalHeight) {
+    void renderCircles(int totalHeight) {
         int levelWidth = 1;
         for (int i = 0; i < nodesToTop(); i++) levelWidth *= 2;
         circle.adjustSizePosition(levelWidth, totalHeight, nodesToLeft(), nodesToTop());
         if (left != null)
-            left.render(totalHeight);
+            left.renderCircles(totalHeight);
         if (right != null)
-            right.render(totalHeight);
+            right.renderCircles(totalHeight);
     }
 
-    ArrayList<String> printHelper(String trailingStr) {
-        String newTrailingStr = trailingStr + " ".repeat(toString().length() + 1);
-        ArrayList<String> result = new ArrayList<>(
-                left != null ? left.printHelper(newTrailingStr) : new ArrayList<>());
-        result.add(trailingStr + " " + toString() + (right != null || left != null ? "┤" : ""));
-        result.addAll(
-                right != null ? right.printHelper(newTrailingStr) : new ArrayList<>());
-        return result;
+    /**
+     * Renders the lines between the circles recursively
+     */
+    void renderLines() {
+        if (left != null) {
+            treePane.getChildren().add(new Connection(circle, left.circle));
+            left.renderLines();
+        }
+        if (right != null) {
+            treePane.getChildren().add(new Connection(circle, right.circle));
+            right.renderLines();
+        }
     }
 
     @Override

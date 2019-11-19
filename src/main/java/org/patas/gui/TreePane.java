@@ -7,11 +7,8 @@ import org.patas.Main;
 import org.patas.tree.AVLTree;
 
 public class TreePane extends Pane {
-    // Padding for top and bottom, and sides
-    static final double[] PADDING = new double[]{ 40, 40 };
     private final Main main;
     private final AVLTree<Integer> tree;
-    // TODO: Find a way to show the connections
 
     /**
      * Constructs the Tree Pane

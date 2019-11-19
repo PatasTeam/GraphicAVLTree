@@ -12,9 +12,8 @@ import org.patas.Event;
 import org.patas.Main;
 
 public class ControlsPane extends HBox {
-    static double HEIGHT = 50;
+    static final double HEIGHT = 50;
     private final Main main;
-    private final Button insert, remove;
     private TextField numberField;
     private final Label errorMessage;
 
@@ -33,9 +32,9 @@ public class ControlsPane extends HBox {
         AnchorPane.setTopAnchor(this, 0.0);
         AnchorPane.setRightAnchor(this, 0.0);
         // Initialize buttons and text field
-        insert = new Button("Insert number");
+        Button insert = new Button("Insert number");
         insert.setOnAction(event -> dispatchEvent(Event.INSERT, Integer.parseInt(numberField.getText())));
-        remove = new Button("Remove number");
+        Button remove = new Button("Remove number");
         remove.setOnAction(event -> dispatchEvent(Event.REMOVE, Integer.parseInt(numberField.getText())));
         numberField = new TextField("0");
         numberField.setTextFormatter(new TextFormatter<>(change ->
