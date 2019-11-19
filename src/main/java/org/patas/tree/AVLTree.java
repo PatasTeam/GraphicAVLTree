@@ -43,7 +43,7 @@ public class AVLTree<E extends Comparable<E>> {
      */
     private Node<E> insert(Node<E> node, E element) {
         if (node == null)
-            return new Node<>(element, new ArrayList<>(), treePane);
+            return new Node<>(element, treePane);
         int comparison = element.compareTo(node.getElement());
         if (comparison > 0)
             node.setLeft(insert(node.getLeft(), element));
@@ -72,8 +72,8 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void remove(E element) {
         root = remove(root, element);
-        if (root != null)
-            render();
+        if (root == null) treePane.getChildren().clear();
+        else render();
     }
 
     /**
@@ -83,7 +83,6 @@ public class AVLTree<E extends Comparable<E>> {
      * @return the parent node of the modified subtree
      */
     private Node<E> remove(Node<E> node, E element) {
-        // TODO: Fix this function
         if (node == null) {
             treePane.relayEventFromTreePane(Event.ELEMENT_NOT_FOUND, 0);
             return null;
@@ -95,19 +94,21 @@ public class AVLTree<E extends Comparable<E>> {
         else if (comparison < 0)
             node.setRight(remove(node.getRight(), element));
         else {
-            if (node.getLeft() == null && node.getRight() == null)
+            if (node.getLeft() == null && node.getRight() == null) {
+                node.removeFromTreePane();
                 return null;
-            else if (node.getLeft() == null)
+            } else if (node.getLeft() == null) {
+                node.removeFromTreePane();
                 node = node.getRight();
-            else if (node.getRight() == null)
+            } else if (node.getRight() == null) {
+                node.removeFromTreePane();
                 node = node.getLeft();
-            else {
-                Node<E> tempLeft = node.getLeft();
-                node = node.getRight();
+            } else {
                 Node<E> leftestFromRight = node.getRight();
                 while (leftestFromRight.getLeft() != null)
                     leftestFromRight = leftestFromRight.getLeft();
-                leftestFromRight.setLeft(tempLeft);
+                node = new Node<>(node, leftestFromRight.getElement());
+                node.setRight(remove(node.getRight(), leftestFromRight.getElement()));
             }
         }
         node.updateHeight();

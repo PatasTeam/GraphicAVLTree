@@ -19,12 +19,25 @@ public class LabeledCircle extends Pane {
     private DoubleBinding minPrefSize;
     private Circle circle;
     private Label label;
+    private Color circleColor;
 
     /**
-     * Creates a new instance of LabeledCircle with a specified label, position and radius.
+     * Creates a new instance of LabeledCircle with a specified label
      * @param text the label assigned to this circle
+     * @param treePane the parent tree pane
      */
     public LabeledCircle(String text, TreePane treePane) {
+        this(text, Color.hsb(360 * Math.random(), 0.8, 1.0), treePane);
+    }
+
+    /**
+     * Creates a new instance of LabeledCircle with a specified label and color
+     * @param text the label assigned to this circle
+     * @param color the color of the tree
+     * @param treePane the parent tree pane
+     */
+    public LabeledCircle(String text, Color color, TreePane treePane) {
+        circleColor = color;
         minPrefSize = Bindings.createDoubleBinding(
                 () -> Math.min(prefHeightProperty().doubleValue(), prefWidthProperty().doubleValue()),
                 prefHeightProperty(),
@@ -44,8 +57,7 @@ public class LabeledCircle extends Pane {
      * Initializes circle with predetermined styles
      */
     private void configureCircle() {
-        Color randomColor = Color.hsb(360 * Math.random(), 0.8, 1.0);
-        circle = new Circle(0, randomColor);
+        circle = new Circle(0, circleColor);
         circle.radiusProperty().bind(minPrefSize.divide(2.0));
         circle.centerXProperty().bind(prefWidthProperty().divide(2.0));
         circle.centerYProperty().bind(prefHeightProperty().divide(2.0));
@@ -58,7 +70,7 @@ public class LabeledCircle extends Pane {
     private void configureLabel(String text) {
         label = new Label(text);
         label.fontProperty().bind(Bindings.createObjectBinding(
-                () -> new Font(minPrefSize.divide(2.0).doubleValue()),
+                () -> new Font(minPrefSize.divide(4.0).doubleValue()),
                 minPrefSize
         ));
         label.setTextFill(Color.BLACK);
@@ -106,5 +118,9 @@ public class LabeledCircle extends Pane {
      */
     DoubleProperty[] getPositionBindings() {
         return new DoubleProperty[]{ layoutXProperty(), layoutYProperty() };
+    }
+
+    public Color getCircleColor() {
+        return circleColor;
     }
 }

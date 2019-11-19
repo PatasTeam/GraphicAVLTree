@@ -17,12 +17,32 @@ class Node<E extends Comparable<E>> {
 
     private enum Direction { LEFT, RIGHT }
 
-    Node(E element, List<Direction> path, TreePane treePane) {
+    /**
+     * Initializes a node from its element, path and parent tree pane
+     * @param element the element to display
+     * @param treePane the parent tree pane
+     */
+    Node(E element, TreePane treePane) {
         this.element = element;
         this.treePane = treePane;
-        this.path = path;
+        path = new ArrayList<>();
         height = 1;
         circle = new LabeledCircle(element.toString(), treePane);
+    }
+
+    /**
+     * Generates a node copying another one and setting a new element
+     * @param oldNode node to copy from
+     * @param element the new element
+     */
+    Node(Node<E> oldNode, E element) {
+        this.element = element;
+        treePane = oldNode.treePane;
+        path = oldNode.path;
+        left = oldNode.left;
+        right = oldNode.right;
+        oldNode.removeFromTreePane();
+        circle = new LabeledCircle(element.toString(), oldNode.circle.getCircleColor(), treePane);
     }
 
     E getElement() {
@@ -120,6 +140,13 @@ class Node<E extends Comparable<E>> {
             treePane.getChildren().add(new Connection(circle, right.circle));
             right.renderLines();
         }
+    }
+
+    /**
+     * Removes the circle from the parent tree pane before being deleted
+     */
+    void removeFromTreePane() {
+        treePane.getChildren().remove(circle);
     }
 
     @Override
