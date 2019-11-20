@@ -36,14 +36,16 @@ public class ControlsPane extends HBox {
         insert.setOnAction(event -> dispatchEvent(Event.INSERT, Integer.parseInt(numberField.getText())));
         Button remove = new Button("Remove number");
         remove.setOnAction(event -> dispatchEvent(Event.REMOVE, Integer.parseInt(numberField.getText())));
-        numberField = new TextField("0");
+        Button insertRandom = new Button("Insert 5 random numbers");
+        insertRandom.setOnAction(event -> dispatchEvent(Event.INSERT_RANDOM, 5));
+        numberField = new TextField("");
         numberField.setTextFormatter(new TextFormatter<>(change ->
-                change.getControlNewText().matches("^[0-9]{0,5}$") ? change : null)
-        );
+                change.getControlNewText().matches("^[0-9]{0,4}$") ? change : null));
+        numberField.setPrefWidth(100);
         errorMessage = new Label("");
         errorMessage.setPrefWidth(320);
         errorMessage.setTextFill(Color.RED);
-        getChildren().addAll(insert, remove, numberField, errorMessage);
+        getChildren().addAll(insert, remove, insertRandom, numberField, errorMessage);
     }
 
     /**

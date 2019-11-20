@@ -29,6 +29,7 @@ public class Main extends Application {
         switch (event) {
             case INSERT:
             case REMOVE:
+            case INSERT_RANDOM:
                 treePane.relayEventFromTreePane(event, num);
                 break;
             case NO_ERROR:

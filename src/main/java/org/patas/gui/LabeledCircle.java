@@ -22,27 +22,18 @@ public class LabeledCircle extends Pane {
     private Color circleColor;
 
     /**
-     * Creates a new instance of LabeledCircle with a specified label
-     * @param text the label assigned to this circle
-     * @param treePane the parent tree pane
-     */
-    public LabeledCircle(String text, TreePane treePane) {
-        this(text, Color.hsb(360 * Math.random(), 0.8, 1.0), treePane);
-    }
-
-    /**
      * Creates a new instance of LabeledCircle with a specified label and color
      * @param text the label assigned to this circle
      * @param color the color of the tree
      * @param treePane the parent tree pane
      */
     public LabeledCircle(String text, Color color, TreePane treePane) {
-        circleColor = color;
         minPrefSize = Bindings.createDoubleBinding(
                 () -> Math.min(prefHeightProperty().doubleValue(), prefWidthProperty().doubleValue()),
                 prefHeightProperty(),
                 prefWidthProperty()
         );
+        circleColor = color;
         configureCircle();
         configureLabel(text);
         translateXProperty().bind(prefWidthProperty().divide(-2.0));
@@ -70,7 +61,7 @@ public class LabeledCircle extends Pane {
     private void configureLabel(String text) {
         label = new Label(text);
         label.fontProperty().bind(Bindings.createObjectBinding(
-                () -> new Font(minPrefSize.divide(4.0).doubleValue()),
+                () -> new Font(minPrefSize.divide(3.0).doubleValue()),
                 minPrefSize
         ));
         label.setTextFill(Color.BLACK);
@@ -95,7 +86,8 @@ public class LabeledCircle extends Pane {
         layoutXProperty().unbind();
         DoubleBinding newLayoutX = getScene().widthProperty().multiply(nodesToLeft).divide(levelWidth);
         layoutYProperty().unbind();
-        DoubleBinding newLayoutY = getScene().heightProperty().subtract(ControlsPane.HEIGHT).multiply(nodesToTop).divide(treeHeight);
+        DoubleBinding newLayoutY = getScene().heightProperty().subtract(ControlsPane.HEIGHT)
+                .multiply(nodesToTop).divide(treeHeight);
         Timeline tl = new Timeline(new KeyFrame(
                 Duration.millis(500),
                 new KeyValue(prefWidthProperty(), newPrefWidth.getValue()),

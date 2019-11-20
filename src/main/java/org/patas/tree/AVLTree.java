@@ -17,7 +17,7 @@ public class AVLTree<E extends Comparable<E>> {
     /**
      * Renders the the circles and connections
      */
-    private void render() {
+    public void render() {
         root.setPath(new ArrayList<>());
         root.renderCircles(root.getHeight());
         treePane.getChildren().removeAll(treePane.getChildren().filtered(
@@ -32,7 +32,6 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void insert(E element) {
         root = insert(root, element);
-        render();
     }
 
     /**
@@ -72,8 +71,6 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void remove(E element) {
         root = remove(root, element);
-        if (root == null) treePane.getChildren().clear();
-        else render();
     }
 
     /**
@@ -87,7 +84,6 @@ public class AVLTree<E extends Comparable<E>> {
             treePane.relayEventFromTreePane(Event.ELEMENT_NOT_FOUND, 0);
             return null;
         }
-        treePane.relayEventFromTreePane(Event.NO_ERROR, 0);
         int comparison = element.compareTo(node.getElement());
         if (comparison > 0)
             node.setLeft(remove(node.getLeft(), element));
@@ -107,7 +103,7 @@ public class AVLTree<E extends Comparable<E>> {
                 Node<E> leftestFromRight = node.getRight();
                 while (leftestFromRight.getLeft() != null)
                     leftestFromRight = leftestFromRight.getLeft();
-                node = new Node<>(node, leftestFromRight.getElement());
+                node = new Node<>(leftestFromRight.getElement(), node);
                 node.setRight(remove(node.getRight(), leftestFromRight.getElement()));
             }
         }
@@ -183,5 +179,9 @@ public class AVLTree<E extends Comparable<E>> {
         int heightLeft = node.getLeft() != null ? node.getLeft().getHeight() : 0;
         int heightRight = node.getRight() != null ? node.getRight().getHeight() : 0;
         return heightLeft - heightRight;
+    }
+
+    public boolean isEmpty() {
+        return root == null;
     }
 }

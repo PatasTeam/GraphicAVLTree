@@ -1,5 +1,6 @@
 package org.patas.tree;
 
+import javafx.scene.paint.Color;
 import org.patas.gui.Connection;
 import org.patas.gui.LabeledCircle;
 import org.patas.gui.TreePane;
@@ -23,26 +24,34 @@ class Node<E extends Comparable<E>> {
      * @param treePane the parent tree pane
      */
     Node(E element, TreePane treePane) {
-        this.element = element;
-        this.treePane = treePane;
-        path = new ArrayList<>();
+        this(element, treePane, new ArrayList<>(), Color.hsb(360 * Math.random(), 0.8, 1.0));
         height = 1;
-        circle = new LabeledCircle(element.toString(), treePane);
     }
 
     /**
      * Generates a node copying another one and setting a new element
+     * @param newElement the new element
      * @param oldNode node to copy from
-     * @param element the new element
      */
-    Node(Node<E> oldNode, E element) {
-        this.element = element;
-        treePane = oldNode.treePane;
-        path = oldNode.path;
+    Node(E newElement, Node<E> oldNode) {
+        this(newElement, oldNode.treePane, oldNode.path, oldNode.circle.getCircleColor());
         left = oldNode.left;
         right = oldNode.right;
         oldNode.removeFromTreePane();
-        circle = new LabeledCircle(element.toString(), oldNode.circle.getCircleColor(), treePane);
+    }
+
+    /**
+     * Constructs a node from the given arguments
+     * @param element the element to save
+     * @param treePane the parent tree pane
+     * @param path the path from the root to this node
+     * @param circleColor the circle's color
+     */
+    private Node(E element, TreePane treePane, List<Direction> path, Color circleColor) {
+        this.element = element;
+        this.treePane = treePane;
+        this.path = path;
+        circle = new LabeledCircle(element.toString(), circleColor, treePane);
     }
 
     E getElement() {
