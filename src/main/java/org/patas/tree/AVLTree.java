@@ -1,16 +1,16 @@
 package org.patas.tree;
 
-import org.patas.Event;
+import org.patas.events.Event;
 import org.patas.gui.Connection;
 import org.patas.gui.TreePane;
 
 import java.util.ArrayList;
 
 public class AVLTree<E extends Comparable<E>> {
-    private final TreePane treePane;
+    private final TreePane<E> treePane;
     private Node<E> root;
 
-    public AVLTree(TreePane treePane) {
+    public AVLTree(TreePane<E> treePane) {
         this.treePane = treePane;
     }
 
@@ -18,6 +18,7 @@ public class AVLTree<E extends Comparable<E>> {
      * Renders the the circles and connections
      */
     public void render() {
+        if (root == null) return;
         root.setPath(new ArrayList<>());
         root.renderCircles(root.getHeight());
         treePane.getChildren().removeAll(treePane.getChildren().filtered(
@@ -49,11 +50,11 @@ public class AVLTree<E extends Comparable<E>> {
         else if (comparison < 0)
             node.setRight(insert(node.getRight(), element));
         else {
-            treePane.relayEventFromTreePane(Event.ELEMENT_ALREADY_INSERTED, 0);
+            treePane.handleEvent(Event.ELEMENT_ALREADY_INSERTED, element);
             return node;
         }
         node.updateHeight();
-        int balance = balance(node);
+        int balance = getBalance(node);
         if (balance > 1 && element.compareTo(node.getLeft().getElement()) > 0)
             return simpleRightRotation(node);
         if (balance < -1 && element.compareTo(node.getRight().getElement()) < 0)
@@ -81,7 +82,7 @@ public class AVLTree<E extends Comparable<E>> {
      */
     private Node<E> remove(Node<E> node, E element) {
         if (node == null) {
-            treePane.relayEventFromTreePane(Event.ELEMENT_NOT_FOUND, 0);
+            treePane.handleEvent(Event.ELEMENT_NOT_FOUND, element);
             return null;
         }
         int comparison = element.compareTo(node.getElement());
@@ -108,7 +109,7 @@ public class AVLTree<E extends Comparable<E>> {
             }
         }
         node.updateHeight();
-        int balance = balance(node);
+        int balance = getBalance(node);
         if (balance > 1 && element.compareTo(node.getLeft().getElement()) > 0)
             return simpleRightRotation(node);
         if (balance < -1 && element.compareTo(node.getRight().getElement()) < 0)
@@ -175,13 +176,9 @@ public class AVLTree<E extends Comparable<E>> {
      * @param node parent node of the subtree
      * @return the difference between the heights of the subtrees
      */
-    private int balance(Node<E> node) {
+    private int getBalance(Node<E> node) {
         int heightLeft = node.getLeft() != null ? node.getLeft().getHeight() : 0;
         int heightRight = node.getRight() != null ? node.getRight().getHeight() : 0;
         return heightLeft - heightRight;
-    }
-
-    public boolean isEmpty() {
-        return root == null;
     }
 }

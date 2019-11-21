@@ -61,7 +61,7 @@ public class LabeledCircle extends Pane {
     private void configureLabel(String text) {
         label = new Label(text);
         label.fontProperty().bind(Bindings.createObjectBinding(
-                () -> new Font(minPrefSize.divide(3.0).doubleValue()),
+                () -> new Font(minPrefSize.divide(4.0).doubleValue()),
                 minPrefSize
         ));
         label.setTextFill(Color.BLACK);

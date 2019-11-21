@@ -1,9 +1,8 @@
-package org.patas;
+package org.patas.events;
 
 public enum Event {
     INSERT,
     REMOVE,
-    INSERT_RANDOM,
     NO_ERROR,
     ELEMENT_NOT_FOUND,
     ELEMENT_ALREADY_INSERTED
