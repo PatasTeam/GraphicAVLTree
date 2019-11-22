@@ -32,9 +32,21 @@ class ControlsPane<E extends Comparable<E>> extends HBox {
         setBackground(new Background(new BackgroundFill(Color.LIGHTGRAY, CornerRadii.EMPTY, Insets.EMPTY)));
         // Initialize buttons and text field
         Button insert = new Button("Insert");
-        insert.setOnAction(event -> handleEvent(Event.INSERT, parseFunction.parse(textField.getText())));
+        insert.setOnAction(event -> {
+            try {
+                handleEvent(Event.INSERT, parseFunction.parse(textField.getText()));
+            } catch (Exception e) {
+                handleEvent(Event.CANT_PARSE, null);
+            }
+        });
         Button remove = new Button("Remove");
-        remove.setOnAction(event -> handleEvent(Event.REMOVE, parseFunction.parse(textField.getText())));
+        remove.setOnAction(event -> {
+            try {
+                handleEvent(Event.REMOVE, parseFunction.parse(textField.getText()));
+            } catch (Exception e) {
+                handleEvent(Event.CANT_PARSE, null);
+            }
+        });
         textField = new TextField("");
         textField.setTextFormatter(new TextFormatter<>(textFilter));
         textField.setPrefWidth(100);
@@ -65,6 +77,8 @@ class ControlsPane<E extends Comparable<E>> extends HBox {
             case ELEMENT_NOT_FOUND:
                 errorMessage.setText("\"" + element + "\" isn't in the tree");
                 break;
+            case CANT_PARSE:
+                errorMessage.setText("Couldn't parse that value");
             default:
                 rootPane.handleEvent(event, element);
         }

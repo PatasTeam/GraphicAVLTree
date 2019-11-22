@@ -5,11 +5,11 @@ import javafx.animation.KeyValue;
 import javafx.animation.Timeline;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
@@ -19,16 +19,15 @@ public class LabeledCircle extends Pane {
     private DoubleBinding minPrefSize;
     private Circle circle;
     private Label label;
-    private Color circleColor;
 
     /**
      * Creates a new instance of LabeledCircle with a specified label and color
      * @param text the label assigned to this circle
-     * @param color the color of the tree
+     * @param circleFill the color of the tree
      * @param treePane the parent tree pane
      */
-    public LabeledCircle(String text, Color color, TreePane treePane) {
-        this(text, color);
+    public LabeledCircle(String text, Paint circleFill, TreePane treePane) {
+        this(text, circleFill);
         treePane.getChildren().add(this);
         relocate(getScene().getWidth() / 2, getScene().getHeight() + 100);
     }
@@ -40,20 +39,19 @@ public class LabeledCircle extends Pane {
      * @param treePane the parent tree pane
      */
     public LabeledCircle(String text, LabeledCircle oldLabeledCircle, TreePane treePane) {
-        this(text, oldLabeledCircle.circleColor);
+        this(text, oldLabeledCircle.circle.fillProperty().get());
         treePane.getChildren().add(this);
         relocate(oldLabeledCircle.getLayoutX(), oldLabeledCircle.getLayoutY());
         setPrefSize(2 * oldLabeledCircle.circle.getRadius(), 2 * oldLabeledCircle.circle.getRadius());
     }
 
-    private LabeledCircle(String text, Color color) {
+    private LabeledCircle(String text, Paint circleFill) {
         minPrefSize = Bindings.createDoubleBinding(
                 () -> Math.min(prefHeightProperty().doubleValue(), prefWidthProperty().doubleValue()),
                 prefHeightProperty(),
                 prefWidthProperty()
         );
-        circleColor = color;
-        configureCircle();
+        configureCircle(circleFill);
         configureLabel(text);
         translateXProperty().bind(prefWidthProperty().divide(-2.0));
         translateYProperty().bind(prefHeightProperty().divide(-2.0));
@@ -63,8 +61,8 @@ public class LabeledCircle extends Pane {
     /**
      * Initializes circle with predetermined styles
      */
-    private void configureCircle() {
-        circle = new Circle(0, circleColor);
+    private void configureCircle(Paint circleFill) {
+        circle = new Circle(0, circleFill);
         circle.radiusProperty().bind(minPrefSize.divide(2.0));
         circle.centerXProperty().bind(prefWidthProperty().divide(2.0));
         circle.centerYProperty().bind(prefHeightProperty().divide(2.0));
@@ -118,13 +116,5 @@ public class LabeledCircle extends Pane {
             layoutYProperty().bind(newLayoutY.add(newPrefHeight.divide(2.0)));
         });
         tl.play();
-    }
-
-    /**
-     * Returns an array with layoutXProperty and layoutYProperty
-     * @return layout X and Y properties
-     */
-    DoubleProperty[] getPositionBindings() {
-        return new DoubleProperty[]{ layoutXProperty(), layoutYProperty() };
     }
 }

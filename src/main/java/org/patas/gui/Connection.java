@@ -11,9 +11,9 @@ public class Connection extends Line {
     public Connection(LabeledCircle circle1, LabeledCircle circle2) {
         setStrokeWidth(4.0);
         setViewOrder(1.0);
-        startXProperty().bind(circle1.getPositionBindings()[0]);
-        startYProperty().bind(circle1.getPositionBindings()[1]);
-        endXProperty().bind(circle2.getPositionBindings()[0]);
-        endYProperty().bind(circle2.getPositionBindings()[1]);
+        startXProperty().bind(circle1.layoutXProperty());
+        startYProperty().bind(circle1.layoutYProperty());
+        endXProperty().bind(circle2.layoutXProperty());
+        endYProperty().bind(circle2.layoutYProperty());
     }
 }
