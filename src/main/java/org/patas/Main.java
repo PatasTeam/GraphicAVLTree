@@ -5,6 +5,15 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.patas.gui.RootPane;
 
+/**
+ * <h1>Graphic AVL Tree</h1>
+ * This program displays an interactive AVL Tree
+ *
+ * @author  Mario Emilio Jiménez Vizcaíno - A01173359
+ * @author  Arturo Efrén Jiménez Garibaldy - A00824428
+ * @author  Kevin Torres Martínez - A01656257
+ * @version 1.0
+ */
 public class Main extends Application {
     @Override
     public void start(Stage stage) {

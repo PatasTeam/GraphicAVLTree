@@ -14,48 +14,53 @@ import javafx.scene.shape.Circle;
 import javafx.scene.text.Font;
 import javafx.scene.text.TextAlignment;
 import javafx.util.Duration;
+import org.patas.events.Event;
 
-public class LabeledCircle extends Pane {
+public class LabeledCircle<E extends Comparable<E>> extends Pane {
     private DoubleBinding minPrefSize;
     private Circle circle;
     private Label label;
 
     /**
-     * Creates a new instance of LabeledCircle with a specified label and color
-     * @param text the label assigned to this circle
-     * @param circleFill the color of the tree
+     * Creates a new instance of LabeledCircle with a specified label and a random color
+     * @param element the element assigned to this circle
      * @param treePane the parent tree pane
      */
-    public LabeledCircle(String text, Paint circleFill, TreePane treePane) {
-        this(text, circleFill);
-        treePane.getChildren().add(this);
+    public LabeledCircle(E element, TreePane<E> treePane) {
+        this(element, Color.hsb(360 * Math.random(), 0.8, 1.0), treePane);
         relocate(getScene().getWidth() / 2, getScene().getHeight() + 100);
     }
 
     /**
      * Constructs a LabeledCircle from the size, position and color from a previous circle
-     * @param text the label assigned to this circle
+     * @param element the new element assigned to this circle
      * @param oldLabeledCircle the circle to be substituted
      * @param treePane the parent tree pane
      */
-    public LabeledCircle(String text, LabeledCircle oldLabeledCircle, TreePane treePane) {
-        this(text, oldLabeledCircle.circle.fillProperty().get());
-        treePane.getChildren().add(this);
+    public LabeledCircle(E element, LabeledCircle oldLabeledCircle, TreePane<E> treePane) {
+        this(element, oldLabeledCircle.circle.fillProperty().get(), treePane);
         relocate(oldLabeledCircle.getLayoutX(), oldLabeledCircle.getLayoutY());
         setPrefSize(2 * oldLabeledCircle.circle.getRadius(), 2 * oldLabeledCircle.circle.getRadius());
     }
 
-    private LabeledCircle(String text, Paint circleFill) {
+    /**
+     * Initializes the basic properties of the circle
+     * @param element the element assigned to this circle
+     * @param circleFill the background color of the circle
+     */
+    private LabeledCircle(E element, Paint circleFill, TreePane<E> treePane) {
         minPrefSize = Bindings.createDoubleBinding(
                 () -> Math.min(prefHeightProperty().doubleValue(), prefWidthProperty().doubleValue()),
                 prefHeightProperty(),
                 prefWidthProperty()
         );
         configureCircle(circleFill);
-        configureLabel(text);
+        configureLabel(element.toString());
         translateXProperty().bind(prefWidthProperty().divide(-2.0));
         translateYProperty().bind(prefHeightProperty().divide(-2.0));
         getChildren().addAll(circle, label);
+        treePane.getChildren().add(this);
+        setOnMouseClicked(event -> treePane.handleEvent(Event.REMOVE, element));
     }
 
     /**

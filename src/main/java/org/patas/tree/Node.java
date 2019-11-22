@@ -14,7 +14,7 @@ class Node<E extends Comparable<E>> {
     private TreePane treePane;
     private Node<E> left, right;
     private List<Direction> path;
-    private LabeledCircle circle;
+    private LabeledCircle<E> circle;
 
     private enum Direction { LEFT, RIGHT }
 
@@ -26,8 +26,7 @@ class Node<E extends Comparable<E>> {
     Node(E element, TreePane treePane) {
         this(element, treePane, new ArrayList<>());
         height = 1;
-        circle = new LabeledCircle(element.toString(),
-                Color.hsb(360 * Math.random(), 0.8, 1.0), treePane);
+        circle = new LabeledCircle<>(element, treePane);
     }
 
     /**
@@ -39,7 +38,7 @@ class Node<E extends Comparable<E>> {
         this(nodeWithNewElement.getElement(), oldNode.treePane, oldNode.path);
         left = oldNode.left;
         right = oldNode.right;
-        circle = new LabeledCircle(element.toString(), nodeWithNewElement.circle, treePane);
+        circle = new LabeledCircle<>(element, nodeWithNewElement.circle, treePane);
     }
 
     /**
