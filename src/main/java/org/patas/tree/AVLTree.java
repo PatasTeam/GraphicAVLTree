@@ -91,32 +91,27 @@ public class AVLTree<E extends Comparable<E>> {
         else if (comparison < 0)
             node.setRight(remove(node.getRight(), element));
         else {
-            if (node.getLeft() == null && node.getRight() == null) {
-                node.removeFromTreePane();
-                return null;
-            } else if (node.getLeft() == null) {
-                node.removeFromTreePane();
-                node = node.getRight();
-            } else if (node.getRight() == null) {
-                node.removeFromTreePane();
-                node = node.getLeft();
-            } else {
+            node.removeFromTreePane();
+            if (node.getLeft() == null && node.getRight() == null) return null;
+            else if (node.getLeft() == null) node = node.getRight();
+            else if (node.getRight() == null) node = node.getLeft();
+            else {
                 Node<E> leftestFromRight = node.getRight();
                 while (leftestFromRight.getLeft() != null)
                     leftestFromRight = leftestFromRight.getLeft();
-                node = new Node<>(leftestFromRight.getElement(), node);
+                node = new Node<>(leftestFromRight, node);
                 node.setRight(remove(node.getRight(), leftestFromRight.getElement()));
             }
         }
         node.updateHeight();
         int balance = getBalance(node);
-        if (balance > 1 && element.compareTo(node.getLeft().getElement()) > 0)
+        if (balance > 1 && getBalance(node.getLeft()) >= 0)
             return simpleRightRotation(node);
-        if (balance < -1 && element.compareTo(node.getRight().getElement()) < 0)
+        if (balance < -1 && getBalance(node.getRight()) <= 0)
             return simpleLeftRotation(node);
-        if (balance > 1 && element.compareTo(node.getLeft().getElement()) < 0)
+        if (balance > 1 && getBalance(node.getLeft()) < 0)
             return doubleRightRotation(node);
-        if (balance < -1 && element.compareTo(node.getRight().getElement()) > 0)
+        if (balance < -1 && getBalance(node.getRight()) > 0)
             return doubleLeftRotation(node);
         return node;
     }
@@ -177,6 +172,7 @@ public class AVLTree<E extends Comparable<E>> {
      * @return the difference between the heights of the subtrees
      */
     private int getBalance(Node<E> node) {
+        if (node == null) return 0;
         int heightLeft = node.getLeft() != null ? node.getLeft().getHeight() : 0;
         int heightRight = node.getRight() != null ? node.getRight().getHeight() : 0;
         return heightLeft - heightRight;

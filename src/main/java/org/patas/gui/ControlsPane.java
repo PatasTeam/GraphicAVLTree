@@ -10,11 +10,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import org.patas.events.Event;
-import org.patas.events.EventManager;
 
 import java.util.function.UnaryOperator;
 
-public class ControlsPane<E extends Comparable<E>> extends HBox implements EventManager<E> {
+class ControlsPane<E extends Comparable<E>> extends HBox {
     static final double HEIGHT = 50;
     private final RootPane<E> rootPane;
     private TextField textField;
@@ -55,8 +54,7 @@ public class ControlsPane<E extends Comparable<E>> extends HBox implements Event
      * @param event the event to display
      * @param element the element that threw the error
      */
-    @Override
-    public void handleEvent(Event event, E element) {
+    void handleEvent(Event event, E element) {
         switch (event) {
             case NO_ERROR:
                 errorMessage.setText("");

@@ -3,11 +3,10 @@ package org.patas.gui;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.layout.AnchorPane;
 import org.patas.events.Event;
-import org.patas.events.EventManager;
 
 import java.util.function.UnaryOperator;
 
-public class RootPane<E extends Comparable<E>> extends AnchorPane implements EventManager<E> {
+public class RootPane<E extends Comparable<E>> extends AnchorPane {
     private ControlsPane<E> controlsPane;
     private TreePane<E> treePane;
 
@@ -40,8 +39,7 @@ public class RootPane<E extends Comparable<E>> extends AnchorPane implements Eve
      * @param event the type of event to relay
      * @param element the number to send
      */
-    @Override
-    public void handleEvent(Event event, E element) {
+    void handleEvent(Event event, E element) {
         switch (event) {
             case INSERT:
             case REMOVE:

@@ -1,12 +1,10 @@
 package org.patas.gui;
 
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import org.patas.events.Event;
-import org.patas.events.EventManager;
 import org.patas.tree.AVLTree;
 
-public class TreePane<E extends Comparable<E>> extends Pane implements EventManager<E> {
+public class TreePane<E extends Comparable<E>> extends Pane {
     private final RootPane<E> rootPane;
     private final AVLTree<E> tree;
 
@@ -24,7 +22,6 @@ public class TreePane<E extends Comparable<E>> extends Pane implements EventMana
      * @param event the type of event to relay
      * @param element the element to send
      */
-    @Override
     public void handleEvent(Event event, E element) {
         rootPane.handleEvent(Event.NO_ERROR, null);
         switch (event) {

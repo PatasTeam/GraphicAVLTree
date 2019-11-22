@@ -28,6 +28,25 @@ public class LabeledCircle extends Pane {
      * @param treePane the parent tree pane
      */
     public LabeledCircle(String text, Color color, TreePane treePane) {
+        this(text, color);
+        treePane.getChildren().add(this);
+        relocate(getScene().getWidth() / 2, getScene().getHeight() + 100);
+    }
+
+    /**
+     * Constructs a LabeledCircle from the size, position and color from a previous circle
+     * @param text the label assigned to this circle
+     * @param oldLabeledCircle the circle to be substituted
+     * @param treePane the parent tree pane
+     */
+    public LabeledCircle(String text, LabeledCircle oldLabeledCircle, TreePane treePane) {
+        this(text, oldLabeledCircle.circleColor);
+        treePane.getChildren().add(this);
+        relocate(oldLabeledCircle.getLayoutX(), oldLabeledCircle.getLayoutY());
+        setPrefSize(2 * oldLabeledCircle.circle.getRadius(), 2 * oldLabeledCircle.circle.getRadius());
+    }
+
+    private LabeledCircle(String text, Color color) {
         minPrefSize = Bindings.createDoubleBinding(
                 () -> Math.min(prefHeightProperty().doubleValue(), prefWidthProperty().doubleValue()),
                 prefHeightProperty(),
@@ -39,9 +58,6 @@ public class LabeledCircle extends Pane {
         translateXProperty().bind(prefWidthProperty().divide(-2.0));
         translateYProperty().bind(prefHeightProperty().divide(-2.0));
         getChildren().addAll(circle, label);
-        treePane.getChildren().add(this);
-        // Move outside of the screen
-        relocate(getScene().getWidth() / 2, getScene().getHeight() + 100);
     }
 
     /**
@@ -110,9 +126,5 @@ public class LabeledCircle extends Pane {
      */
     DoubleProperty[] getPositionBindings() {
         return new DoubleProperty[]{ layoutXProperty(), layoutYProperty() };
-    }
-
-    public Color getCircleColor() {
-        return circleColor;
     }
 }

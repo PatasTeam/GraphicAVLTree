@@ -24,20 +24,22 @@ class Node<E extends Comparable<E>> {
      * @param treePane the parent tree pane
      */
     Node(E element, TreePane treePane) {
-        this(element, treePane, new ArrayList<>(), Color.hsb(360 * Math.random(), 0.8, 1.0));
+        this(element, treePane, new ArrayList<>());
         height = 1;
+        circle = new LabeledCircle(element.toString(),
+                Color.hsb(360 * Math.random(), 0.8, 1.0), treePane);
     }
 
     /**
      * Generates a node copying another one and setting a new element
-     * @param newElement the new element
+     * @param nodeWithNewElement the new element
      * @param oldNode node to copy from
      */
-    Node(E newElement, Node<E> oldNode) {
-        this(newElement, oldNode.treePane, oldNode.path, oldNode.circle.getCircleColor());
+    Node(Node<E> nodeWithNewElement, Node<E> oldNode) {
+        this(nodeWithNewElement.getElement(), oldNode.treePane, oldNode.path);
         left = oldNode.left;
         right = oldNode.right;
-        oldNode.removeFromTreePane();
+        circle = new LabeledCircle(element.toString(), nodeWithNewElement.circle, treePane);
     }
 
     /**
@@ -45,13 +47,11 @@ class Node<E extends Comparable<E>> {
      * @param element the element to save
      * @param treePane the parent tree pane
      * @param path the path from the root to this node
-     * @param circleColor the circle's color
      */
-    private Node(E element, TreePane treePane, List<Direction> path, Color circleColor) {
+    private Node(E element, TreePane treePane, List<Direction> path) {
         this.element = element;
         this.treePane = treePane;
         this.path = path;
-        circle = new LabeledCircle(element.toString(), circleColor, treePane);
     }
 
     E getElement() {
