@@ -20,6 +20,7 @@ public class LabeledCircle<E extends Comparable<E>> extends Pane {
     private DoubleBinding minPrefSize;
     private Circle circle;
     private Label label;
+    private Timeline tl;
 
     /**
      * Creates a new instance of LabeledCircle with a specified label and a random color
@@ -98,6 +99,8 @@ public class LabeledCircle<E extends Comparable<E>> extends Pane {
      * @param nodesToTop the nodes to this node's top
      */
     public void adjustSizePosition(int levelWidth, int treeHeight, int nodesToLeft, int nodesToTop) {
+        if (tl != null)
+            tl.stop();
         prefWidthProperty().unbind();
         DoubleBinding newPrefWidth = getScene().widthProperty().divide(levelWidth);
         prefHeightProperty().unbind();
@@ -107,7 +110,7 @@ public class LabeledCircle<E extends Comparable<E>> extends Pane {
         layoutYProperty().unbind();
         DoubleBinding newLayoutY = getScene().heightProperty().subtract(ControlsPane.HEIGHT)
                 .multiply(nodesToTop).divide(treeHeight);
-        Timeline tl = new Timeline(new KeyFrame(
+        tl = new Timeline(new KeyFrame(
                 Duration.millis(500),
                 new KeyValue(prefWidthProperty(), newPrefWidth.getValue()),
                 new KeyValue(prefHeightProperty(), newPrefHeight.getValue()),
