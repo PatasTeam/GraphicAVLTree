@@ -7,8 +7,8 @@ import org.patas.events.Event;
 import java.util.function.UnaryOperator;
 
 public class RootPane<E extends Comparable<E>> extends AnchorPane {
-    private ControlsPane<E> controlsPane;
-    private TreePane<E> treePane;
+    private final ControlsPane<E> controlsPane;
+    private final TreePane<E> treePane;
 
     /**
      * Builds a RootPane from a function to parse the input and a formatter to limit

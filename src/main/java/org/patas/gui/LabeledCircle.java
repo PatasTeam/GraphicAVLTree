@@ -17,7 +17,7 @@ import javafx.util.Duration;
 import org.patas.events.Event;
 
 public class LabeledCircle<E extends Comparable<E>> extends Pane {
-    private DoubleBinding minPrefSize;
+    private final DoubleBinding minPrefSize;
     private Circle circle;
     private Label label;
     private Timeline tl;
@@ -39,9 +39,10 @@ public class LabeledCircle<E extends Comparable<E>> extends Pane {
      * @param treePane the parent tree pane
      */
     public LabeledCircle(E element, LabeledCircle oldLabeledCircle, TreePane<E> treePane) {
-        this(element, oldLabeledCircle.circle.fillProperty().get(), treePane);
+        this(element, oldLabeledCircle.circle.getFill(), treePane);
         relocate(oldLabeledCircle.getLayoutX(), oldLabeledCircle.getLayoutY());
-        setPrefSize(2 * oldLabeledCircle.circle.getRadius(), 2 * oldLabeledCircle.circle.getRadius());
+        double oldLabeledCircleSize = oldLabeledCircle.minPrefSize.get();
+        setPrefSize(oldLabeledCircleSize, oldLabeledCircleSize);
     }
 
     /**
@@ -106,22 +107,21 @@ public class LabeledCircle<E extends Comparable<E>> extends Pane {
         prefHeightProperty().unbind();
         DoubleBinding newPrefHeight = getScene().heightProperty().subtract(ControlsPane.HEIGHT).divide(treeHeight);
         layoutXProperty().unbind();
-        DoubleBinding newLayoutX = getScene().widthProperty().multiply(nodesToLeft).divide(levelWidth);
+        DoubleBinding newLayoutX = newPrefWidth.multiply(nodesToLeft + 0.5);
         layoutYProperty().unbind();
-        DoubleBinding newLayoutY = getScene().heightProperty().subtract(ControlsPane.HEIGHT)
-                .multiply(nodesToTop).divide(treeHeight);
+        DoubleBinding newLayoutY = newPrefHeight.multiply(nodesToTop + 0.5);
         tl = new Timeline(new KeyFrame(
                 Duration.millis(500),
                 new KeyValue(prefWidthProperty(), newPrefWidth.getValue()),
                 new KeyValue(prefHeightProperty(), newPrefHeight.getValue()),
-                new KeyValue(layoutXProperty(), newLayoutX.getValue() + newPrefWidth.getValue() / 2.0),
-                new KeyValue(layoutYProperty(), newLayoutY.getValue() + newPrefHeight.getValue() / 2.0)
+                new KeyValue(layoutXProperty(), newLayoutX.getValue()),
+                new KeyValue(layoutYProperty(), newLayoutY.getValue())
         ));
         tl.setOnFinished(event -> {
             prefWidthProperty().bind(newPrefWidth);
             prefHeightProperty().bind(newPrefHeight);
-            layoutXProperty().bind(newLayoutX.add(newPrefWidth.divide(2.0)));
-            layoutYProperty().bind(newLayoutY.add(newPrefHeight.divide(2.0)));
+            layoutXProperty().bind(newLayoutX);
+            layoutYProperty().bind(newLayoutY);
         });
         tl.play();
     }

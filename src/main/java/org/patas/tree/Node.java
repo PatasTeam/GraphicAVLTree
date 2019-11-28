@@ -1,30 +1,24 @@
 package org.patas.tree;
 
-import javafx.scene.paint.Color;
 import org.patas.gui.Connection;
 import org.patas.gui.LabeledCircle;
 import org.patas.gui.TreePane;
 
-import java.util.ArrayList;
-import java.util.List;
-
 class Node<E extends Comparable<E>> {
     private final E element;
-    private int height;
-    private TreePane treePane;
     private Node<E> left, right;
-    private List<Direction> path;
-    private LabeledCircle<E> circle;
-
-    private enum Direction { LEFT, RIGHT }
+    private int height, nodesToTop, nodesToLeft;
+    private final TreePane<E> treePane;
+    private final LabeledCircle<E> circle;
 
     /**
      * Initializes a node from its element, path and parent tree pane
      * @param element the element to display
      * @param treePane the parent tree pane
      */
-    Node(E element, TreePane treePane) {
-        this(element, treePane, new ArrayList<>());
+    Node(E element, TreePane<E> treePane) {
+        this.element = element;
+        this.treePane = treePane;
         height = 1;
         circle = new LabeledCircle<>(element, treePane);
     }
@@ -35,22 +29,11 @@ class Node<E extends Comparable<E>> {
      * @param oldNode node to copy from
      */
     Node(Node<E> nodeWithNewElement, Node<E> oldNode) {
-        this(nodeWithNewElement.getElement(), oldNode.treePane, oldNode.path);
+        element = nodeWithNewElement.getElement();
+        treePane = oldNode.treePane;
         left = oldNode.left;
         right = oldNode.right;
         circle = new LabeledCircle<>(element, nodeWithNewElement.circle, treePane);
-    }
-
-    /**
-     * Constructs a node from the given arguments
-     * @param element the element to save
-     * @param treePane the parent tree pane
-     * @param path the path from the root to this node
-     */
-    private Node(E element, TreePane treePane, List<Direction> path) {
-        this.element = element;
-        this.treePane = treePane;
-        this.path = path;
     }
 
     E getElement() {
@@ -65,8 +48,8 @@ class Node<E extends Comparable<E>> {
      * Recalculates max height from the height of its left and right nodes
      */
     void updateHeight() {
-        int heightLeft = left != null ? left.getHeight() : 0;
-        int heightRight = right != null ? right.getHeight() : 0;
+        int heightLeft = left != null ? left.height : 0;
+        int heightRight = right != null ? right.height : 0;
         height = Math.max(heightLeft, heightRight) + 1;
     }
 
@@ -88,38 +71,16 @@ class Node<E extends Comparable<E>> {
 
     /**
      * Updates the path from root node to this node
-     * @param path the path to this node
+     * @param nodesToTop the number of nodes to the top
+     * @param nodesToLeft the number of nodes to the left
      */
-    void setPath(List<Direction> path) {
-        this.path = path;
-        if (left != null) {
-            List<Direction> leftPath = new ArrayList<>(path);
-            leftPath.add(Direction.LEFT);
-            left.setPath(leftPath);
-        }
-        if (right != null) {
-            List<Direction> rightPath = new ArrayList<>(path);
-            rightPath.add(Direction.RIGHT);
-            right.setPath(rightPath);
-        }
-    }
-
-    /**
-     * Calculates the nodes to the root of the tree
-     * @return the number of nodes to the top
-     */
-    private int nodesToTop() {
-        return path.size();
-    }
-
-    /**
-     * Calculates the nodes to the left of this node
-     * @return the number of nodes to the left
-     */
-    private int nodesToLeft() {
-        return path.stream()
-                .mapToInt(value -> value == Direction.RIGHT ? 0 : 1)
-                .reduce(0, (acc, elem) -> 2 * acc + elem);
+    void setPosition(int nodesToTop, int nodesToLeft) {
+        this.nodesToTop = nodesToTop;
+        this.nodesToLeft = nodesToLeft;
+        if (left != null)
+            left.setPosition(nodesToTop + 1, 2 * nodesToLeft);
+        if (right != null)
+            right.setPosition(nodesToTop + 1, 2 * nodesToLeft + 1);
     }
 
     /**
@@ -128,8 +89,8 @@ class Node<E extends Comparable<E>> {
      */
     void renderCircles(int totalHeight) {
         int levelWidth = 1;
-        for (int i = 0; i < nodesToTop(); i++) levelWidth *= 2;
-        circle.adjustSizePosition(levelWidth, totalHeight, nodesToLeft(), nodesToTop());
+        for (int i = 0; i < nodesToTop; i++) levelWidth *= 2;
+        circle.adjustSizePosition(levelWidth, totalHeight, nodesToLeft, nodesToTop);
         if (left != null)
             left.renderCircles(totalHeight);
         if (right != null)
@@ -137,7 +98,7 @@ class Node<E extends Comparable<E>> {
     }
 
     /**
-     * Renders the lines between the circles recursively
+     * Renders the lines between this circle and its children recursively
      */
     void renderLines() {
         if (left != null) {

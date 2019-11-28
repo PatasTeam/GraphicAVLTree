@@ -27,11 +27,9 @@ public class TreePane<E extends Comparable<E>> extends Pane {
         switch (event) {
             case INSERT:
                 tree.insert(element);
-                tree.render();
                 break;
             case REMOVE:
                 tree.remove(element);
-                tree.render();
                 break;
             default:
                 rootPane.handleEvent(event, element);

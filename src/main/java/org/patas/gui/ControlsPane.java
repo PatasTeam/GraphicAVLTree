@@ -15,16 +15,14 @@ import java.util.function.UnaryOperator;
 
 class ControlsPane<E extends Comparable<E>> extends HBox {
     static final double HEIGHT = 50;
-    private final RootPane<E> rootPane;
     private TextField textField;
     private final Label errorMessage;
 
     /**
      * Constructs the Controls Pane
-     * @param rootPane the Application that instantiated this class
+     * @param rootPane the root pane that instantiated this class
      */
     ControlsPane(RootPane<E> rootPane, RootPane.ParseFunction<E> parseFunction, UnaryOperator<TextFormatter.Change> textFilter) {
-        this.rootPane = rootPane;
         // Set custom styles to the underlying HBox
         setSpacing(16);
         setAlignment(Pos.CENTER);
@@ -34,7 +32,7 @@ class ControlsPane<E extends Comparable<E>> extends HBox {
         Button insert = new Button("Insert");
         insert.setOnAction(event -> {
             try {
-                handleEvent(Event.INSERT, parseFunction.parse(textField.getText()));
+                rootPane.handleEvent(Event.INSERT, parseFunction.parse(textField.getText()));
             } catch (Exception e) {
                 handleEvent(Event.CANT_PARSE, null);
             }
@@ -42,7 +40,7 @@ class ControlsPane<E extends Comparable<E>> extends HBox {
         Button remove = new Button("Remove");
         remove.setOnAction(event -> {
             try {
-                handleEvent(Event.REMOVE, parseFunction.parse(textField.getText()));
+                rootPane.handleEvent(Event.REMOVE, parseFunction.parse(textField.getText()));
             } catch (Exception e) {
                 handleEvent(Event.CANT_PARSE, null);
             }
@@ -79,8 +77,6 @@ class ControlsPane<E extends Comparable<E>> extends HBox {
                 break;
             case CANT_PARSE:
                 errorMessage.setText("Couldn't parse that value");
-            default:
-                rootPane.handleEvent(event, element);
         }
     }
 }

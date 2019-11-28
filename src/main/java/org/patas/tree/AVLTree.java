@@ -4,8 +4,6 @@ import org.patas.events.Event;
 import org.patas.gui.Connection;
 import org.patas.gui.TreePane;
 
-import java.util.ArrayList;
-
 public class AVLTree<E extends Comparable<E>> {
     private final TreePane<E> treePane;
     private Node<E> root;
@@ -17,9 +15,9 @@ public class AVLTree<E extends Comparable<E>> {
     /**
      * Renders the the circles and connections
      */
-    public void render() {
+     private void render() {
         if (root == null) return;
-        root.setPath(new ArrayList<>());
+        root.setPosition(0, 0);
         root.renderCircles(root.getHeight());
         treePane.getChildren().removeAll(treePane.getChildren().filtered(
                 node -> node.getClass().equals(Connection.class)
@@ -33,6 +31,7 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void insert(E element) {
         root = insert(root, element);
+        render();
     }
 
     /**
@@ -45,9 +44,9 @@ public class AVLTree<E extends Comparable<E>> {
         if (node == null)
             return new Node<>(element, treePane);
         int comparison = element.compareTo(node.getElement());
-        if (comparison > 0)
+        if (comparison < 0)
             node.setLeft(insert(node.getLeft(), element));
-        else if (comparison < 0)
+        else if (comparison > 0)
             node.setRight(insert(node.getRight(), element));
         else {
             treePane.handleEvent(Event.ELEMENT_ALREADY_INSERTED, element);
@@ -55,13 +54,13 @@ public class AVLTree<E extends Comparable<E>> {
         }
         node.updateHeight();
         int balance = getBalance(node);
-        if (balance > 1 && element.compareTo(node.getLeft().getElement()) > 0)
-            return simpleRightRotation(node);
-        if (balance < -1 && element.compareTo(node.getRight().getElement()) < 0)
-            return simpleLeftRotation(node);
         if (balance > 1 && element.compareTo(node.getLeft().getElement()) < 0)
-            return doubleRightRotation(node);
+            return simpleRightRotation(node);
         if (balance < -1 && element.compareTo(node.getRight().getElement()) > 0)
+            return simpleLeftRotation(node);
+        if (balance > 1 && element.compareTo(node.getLeft().getElement()) > 0)
+            return doubleRightRotation(node);
+        if (balance < -1 && element.compareTo(node.getRight().getElement()) < 0)
             return doubleLeftRotation(node);
         return node;
     }
@@ -72,6 +71,7 @@ public class AVLTree<E extends Comparable<E>> {
      */
     public void remove(E element) {
         root = remove(root, element);
+        render();
     }
 
     /**
@@ -86,9 +86,9 @@ public class AVLTree<E extends Comparable<E>> {
             return null;
         }
         int comparison = element.compareTo(node.getElement());
-        if (comparison > 0)
+        if (comparison < 0)
             node.setLeft(remove(node.getLeft(), element));
-        else if (comparison < 0)
+        else if (comparison > 0)
             node.setRight(remove(node.getRight(), element));
         else {
             node.removeFromTreePane();
